@@ -94,7 +94,8 @@ async def get_forecast(latitude: float, longitude: float) -> str:
 @mcp.tool()
 async def get_agencies():
     """
-    Calls the endpoint that returns the bus agencies.
+    Calls the endpoint that returns the bus agencies. If the user asks for a specific city or area, look for a correspondence
+    in the output of this function.
     """
     url = f"{TPL_BASE_URL}/agencies"
     async with httpx.AsyncClient() as client:
