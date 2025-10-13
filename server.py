@@ -108,9 +108,13 @@ async def get_agencies():
 @mcp.tool()
 async def get_bus_lines(agency_url: str):
     """
-    Calls the endpoint that returns the bus lines for a specific agency.
-    The parameter must be the full agency URL (as returned by get_agencies()).
-    This means that you first need to call get_agencies() and retrieve the correct link.
+    This function returns the BUS LINES that one specific agency operates.
+    Before running this function, it is mandatory to find the specific url given by get_agencies().
+
+    args:
+        - agency_url: str, it's a URL that has been previously retrieved with get_agencies() function
+    required:
+        - agency_url
     """
     url = f"{TPL_BASE_URL}/bus-lines/"
     params = {"agency": agency_url}
@@ -125,4 +129,5 @@ async def get_bus_lines(agency_url: str):
 
 if __name__ == "__main__":
     # Initialize and run the server
+    print("\n Server is now running...")
     mcp.run(transport='stdio')
