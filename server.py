@@ -1,28 +1,24 @@
-from typing import Any
+import asyncio
+
+import os
+
 import httpx
+from groq import AsyncGroq
 from mcp.server.fastmcp import FastMCP
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Initialize FAstMCP server
-mcp = FastMCP("weather")
+mcp = FastMCP("snap4")
 
 # Constants
 TPL_BASE_URL = "https://www.snap4city.org/superservicemap/api/v1/tpl"
-NWS_API_BASE = "https://api.weather.gov"
-USER_AGENT = "weather-app/1.0"
+USER_AGENT = "snap/1.0"
+api_key = os.getenv("GROQ_API_KEY")
 
-async def make_nws_request(url: str) -> dict[str, Any] | None:
-    """Make a request to the NWS API with proper error handling."""
-    headers = {
-        "User-Agent": USER_AGENT,
-        "Accept": "application/geo+json"
-    }
-    async with httpx.AsyncClient() as client:
-        try:
-            response = await client.get(url, headers=headers, timeout=30.0)
-            response.raise_for_status()
-            return response.json()
-        except Exception:
-            return None
+client = AsyncGroq(api_key=api_key, base_url="https://api.groq.com/")
+model = "meta-llama/llama-4-scout-17b-16e-instruct"
 
 def format_alert(feature: dict) -> str:
     """Format an alert feature into a readable string."""
@@ -34,62 +30,6 @@ Severity: {props.get('severity', 'Unknown')}
 Description: {props.get('description', 'No description available')}
 Instructions: {props.get('instruction', 'No specific instructions provided')}
 """
-
-@mcp.tool()
-async def get_alerts(state: str) -> str:
-    """
-    Get weather alerts for a US state.
-    Args:
-        state: Two-letter US state code (e.g. CA, NY)
-    """
-    url = f"{NWS_API_BASE}/alerts/active/area/{state}"
-    data = await make_nws_request(url)
-
-    if not data or "features" not in data:
-        return "Unable to fetch alerts or no alerts found."
-
-    if not data["features"]:
-        return "No alerts found for this state."
-
-    alerts = [format_alert(feature) for feature in data["features"]]
-    return "\n ... \n".join(alerts)
-
-@mcp.tool()
-async def get_forecast(latitude: float, longitude: float) -> str:
-    """
-    Get weather forecast for a location.
-
-    Args:
-        latitude: Latitude of the location
-        longitude: Longitude of the location
-    """
-    # first get the forecast grid endpoint
-    points_url = f"{NWS_API_BASE}/points/{latitude},{longitude}"
-    points_data = await make_nws_request(points_url)
-
-    if not points_data:
-        return "Unable to fetch forecast data for this location."
-
-        # Get the forecast URL from the points response
-    forecast_url = points_data["properties"]["forecast"]
-    forecast_data = await make_nws_request(forecast_url)
-
-    if not forecast_data:
-        return "Unable to fetch detailed forecast."
-
-    # Format the periods into a readable forecast
-    periods = forecast_data["properties"]["periods"]
-    forecasts = []
-    for period in periods[:5]:  # Only show next 5 periods
-        forecast = f"""
-    {period['name']}:
-    Temperature: {period['temperature']}°{period['temperatureUnit']}
-    Wind: {period['windSpeed']} {period['windDirection']}
-    Forecast: {period['detailedForecast']}
-    """
-        forecasts.append(forecast)
-
-    return "\n---\n".join(forecasts)
 
 @mcp.tool()
 async def get_agencies():
@@ -107,21 +47,40 @@ async def get_agencies():
             return None
 
 @mcp.tool()
-async def get_bus_lines(agency_url: str):
+async def get_bus_lines(area: str, agency_name: str) -> dict:
     """
-    This function returns the BUS LINES that one specific agency operates.
-    Before running this function, it is mandatory to find the specific url given by get_agencies().
+    #TODO TO BE REWRITTEN the docstring
+    This function returns the BUS LINES that one specific agency operates. The arguments can be either an area (city or region) or the agency name.
 
     args:
-        - agency_url: str, it's a URL that has been previously retrieved with get_agencies() function
+        - area: str, name of a specific zone. It may be a city, it may be a region. In case it is not clear, try to look for clues in the previous conversation.
+        - agency_name: str, the name of the agency whose url needs to be retrieved.
     required:
-        - agency_url
     """
+    async def get_agency_url(area: str, agency_name: str, temperature: int = 0, max_tokens=512):
+        agencies = await get_agencies()
+
+        get_agency_url_chat_history = [{"role": "system",
+                                  "content": "Given this input, give me ONLY the agency link. Answer with 'http' and the correct link. Do not use any other words. The input has either the area or the name of the specific agency. DO NOT WRITE ANYTHING ELSE IN YOUR RESPONSE: ONLY THE AGENCY URL ONCE"
+                                  },
+                                 {"role": "user", "content": f"Find the link of the agency of tpl that better serves this area: {area}, or look for this specific agency: {agency_name} Use this list: {agencies}"}]
+
+        response = await client.chat.completions.create(
+            model=model,  # Adjust the model as necessary
+            messages=get_agency_url_chat_history,
+            max_tokens=max_tokens,
+            temperature=temperature
+        )
+
+        return response.choices[0].message.content
+
+    agency =  await get_agency_url(area=area, agency_name=agency_name)
+    print(agency)
     url = f"{TPL_BASE_URL}/bus-lines/"
-    params = {"agency": agency_url}
-    async with httpx.AsyncClient() as client:
+    params = {"agency": agency}
+    async with httpx.AsyncClient() as async_client:
         try:
-            resp = await client.get(url, params=params, timeout=10)
+            resp = await async_client.get(url, params=params, timeout=10)
             resp.raise_for_status()
             return resp.json()
         except Exception:
@@ -132,3 +91,7 @@ if __name__ == "__main__":
     # Initialize and run the server
     print("\n Server is now running...")
     mcp.run(transport='stdio')
+
+    #res = asyncio.run(get_bus_lines(area="athens", agency_name=""))
+
+    #print(res)
