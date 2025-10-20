@@ -20,24 +20,21 @@ api_key = os.getenv("GROQ_API_KEY")
 client = AsyncGroq(api_key=api_key, base_url="https://api.groq.com/")
 model = "meta-llama/llama-4-scout-17b-16e-instruct"
 
-def format_alert(feature: dict) -> str:
-    """Format an alert feature into a readable string."""
-    props = feature["properties"]
-    return f"""
-Event: {props.get('event', 'Unknown')}
-Area: {props.get('areaDesc', 'Unknown')}
-Severity: {props.get('severity', 'Unknown')}
-Description: {props.get('description', 'No description available')}
-Instructions: {props.get('instruction', 'No specific instructions provided')}
-"""
-
-@mcp.tool()
+@mcp.resource("file://documents/agencies")
 async def get_agencies():
     """
-    Calls the endpoint that returns the bus agencies. If the user asks for a specific city or area, look for a correspondence
+    Returns the bus agencies. If the user asks for a specific city or area, look for a correspondence
     in the output of this function.
     """
     url = f"{TPL_BASE_URL}/agencies"
+
+    """
+    [NOTA PER LA TESI]
+    Chiamare l'endpoint non credo sia ideale per queste situazioni. Idealmente vorrei farlo una volta al giorno/settimana.
+    Il risultato lo salvo in un file a parte e questa funzione legge quel file. 
+    Per aggiornare quel file creerei un tool (disponibile anche al client) che gira sul server e aggiorna il file con regolarità
+    Stessa cosa vale per tutti gli altri mcp.resources
+    """
     async with httpx.AsyncClient() as client:
         try:
             resp = await client.get(url, timeout=10)
@@ -49,7 +46,6 @@ async def get_agencies():
 @mcp.tool()
 async def get_bus_lines(area: str, agency_name: str) -> dict:
     """
-    #TODO TO BE REWRITTEN the docstring
     This function returns the BUS LINES that one specific agency operates. The arguments can be either an area (city or region) or the agency name.
 
     args:
@@ -86,6 +82,31 @@ async def get_bus_lines(area: str, agency_name: str) -> dict:
         except Exception:
             return None
 
+
+@mcp.prompt("explain_bus_lines")
+async def explain_bus_lines_prompt(bus_data: dict, area: str = None):
+    """
+    Generate a natural-language explanation for the bus lines available in a given area.
+
+    Args:
+        bus_data (dict): The JSON returned by get_bus_lines().
+        area (str, optional): The name of the area to contextualize the answer.
+    """
+    intro = f"The following is the list of bus lines operating in {area}:" if area else "Here are some bus lines:"
+
+    # This prompt simply structures what the model should do with the JSON data
+    return {
+        "role": "system",
+        "content": (
+            f"{intro}\n\n"
+            f"{bus_data}\n\n"
+            "Please explain to the user in a clear and friendly way:\n"
+            "- How many lines there are,\n"
+            "- Which ones seem to be the main routes (based on names or codes),\n"
+            "- And any pattern you can infer (e.g. which cover the city center or suburbs).\n"
+            "Avoid restating the raw JSON; focus on clarity and usefulness."
+        )
+    }
 
 if __name__ == "__main__":
     # Initialize and run the server
