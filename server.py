@@ -6,6 +6,7 @@ import httpx
 from groq import AsyncGroq
 from mcp.server.fastmcp import FastMCP
 from dotenv import load_dotenv
+from typing import Optional
 
 load_dotenv()
 
@@ -13,20 +14,20 @@ load_dotenv()
 mcp = FastMCP("snap4")
 
 # Constants
-TPL_BASE_URL = "https://www.snap4city.org/superservicemap/api/v1/tpl"
+TPL_BASE_URL = "https://www.snap4city.org/superservicemap/api/v1/"
 USER_AGENT = "snap/1.0"
 api_key = os.getenv("GROQ_API_KEY")
 
 client = AsyncGroq(api_key=api_key, base_url="https://api.groq.com/")
 model = "meta-llama/llama-4-scout-17b-16e-instruct"
 
-@mcp.resource("file://documents/agencies")
+@mcp.resource("file://snap/agencies")
 async def get_agencies():
     """
     Returns the bus agencies. If the user asks for a specific city or area, look for a correspondence
     in the output of this function.
     """
-    url = f"{TPL_BASE_URL}/agencies"
+    url = f"{TPL_BASE_URL}/tpl/agencies"
 
     """
     [NOTA PER LA TESI]
@@ -42,6 +43,48 @@ async def get_agencies():
             return resp.json()
         except Exception:
             return None
+
+@mcp.tool()
+async def get_events(
+    range: Optional[str],
+    selection: Optional[str],
+    maxDists: Optional[float],
+    maxResults: Optional[int] 
+):
+    """
+    It allows to retrieve the geolocated events in a given temporal range (day, week or month). 
+    The results can be possibly filtered to be within a specified distance from a GPS position, or within a rectangular area or inside a WKT described geographic area.
+
+    args:
+        - range: str, Time range for the events to be retrieved, it can be day for the events of the day of the request, week for the events in the next 7 days or month for the events in the next 30 days (if omitted day is assumed).
+        - selection: str, Optional lat;lng with a GPS position, or lat1;lng1;lat2;lng2 for a rectangular area or wkt:string or geo:geoid for a geographic area described as Well Known Text (see other request types for more details). Example: 43.7756;11.2490
+        - maxDists: float, Maximum distance from the reference position (selection parameter), expressed in kilometers. This parameter can also be set to inside, in which case services are discovered that have a WKT geometry that covers the reference position. It defaults to 0.1. Example: 0.2
+        - maxResults: int, Maximum number of results to be returned. If it is set to zero, all results are returned. It defaults to 100. Example: 10
+    """
+    
+    url = f"{TPL_BASE_URL}/events"
+    params = {}
+    for key, value in {
+        "range": range,
+        "selection": selection,
+        "maxDists": maxDists,
+        "maxResults": maxResults,
+    }.items():
+        if value is not None:
+            params[key] = value
+
+
+
+    async with httpx.AsyncClient() as async_client:
+        try:
+            resp = await async_client.get(url, params=params, timeout=10)
+            resp.raise_for_status()
+            return resp.json()
+        except Exception:
+            return None
+
+
+
 
 @mcp.tool()
 async def get_bus_lines(area: str, agency_name: str) -> dict:
@@ -72,7 +115,7 @@ async def get_bus_lines(area: str, agency_name: str) -> dict:
 
     agency =  await get_agency_url(area=area, agency_name=agency_name)
     print(agency)
-    url = f"{TPL_BASE_URL}/bus-lines/"
+    url = f"{TPL_BASE_URL}/tpl/bus-lines/"
     params = {"agency": agency}
     async with httpx.AsyncClient() as async_client:
         try:
