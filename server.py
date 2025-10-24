@@ -25,50 +25,50 @@ model = "meta-llama/llama-4-scout-17b-16e-instruct"
 
 @mcp.tool()
 async def get_services(
-    selection: Optional[str],
-    queryId: Optional[str],
-    search: Optional[str],
-    categories: Optional[str],
-    text: Optional[str],
-    maxDists: Optional[float],
-    maxResults: Optional[int],
-    lang: Optional[str],
-    geometry: Optional[bool],
-    uid: Optional[str],
-    format: Optional[str],
-    map: Optional[str],
-    controls: Optional[str],
-    info: Optional[str],
-    serviceUri: Optional[str],
-    realtime: Optional[bool],
-    requestFrom: Optional[str],
-    valueName: Optional[str],
-    fromTime: Optional[str],
-    toTime: Optional[str],
-    value_type: Optional[str],
-    healthiness: Optional[bool],
-    graphUri: Optional[str],
-    fullCount: Optional[bool],
-    accessToken: Optional[str],
-    apikey: Optional[str],
+        selection: Optional[str],
+        queryId: Optional[str],
+        search: Optional[str],
+        categories: Optional[str],
+        text: Optional[str],
+        maxDists: Optional[float],
+        maxResults: Optional[int],
+        lang: Optional[str],
+        geometry: Optional[bool],
+        uid: Optional[str],
+        format: Optional[str],
+        map: Optional[str],
+        controls: Optional[str],
+        info: Optional[str],
+        serviceUri: Optional[str],
+        realtime: Optional[bool],
+        requestFrom: Optional[str],
+        valueName: Optional[str],
+        fromTime: Optional[str],
+        toTime: Optional[str],
+        value_type: Optional[str],
+        healthiness: Optional[bool],
+        graphUri: Optional[str],
+        fullCount: Optional[bool],
+        accessToken: Optional[str],
+        apikey: Optional[str],
 ):
     """
     Service search near GPS position - It allows to retrieve the set of services that are near a given GPS position. The services can be filtered as belonging to specific categories (e.g. Accommodation, Hotel, Restaurant, etc.), or having specific words in any textual field. It can also be used to find services that have a WKT spatial description that contains a specific GPS position.
-    Service search near a service - It allows to retrieve the set of services that are near a given service identified by its serviceUri. The services can be filtered as belonging to specific categories (e.g. Accomodation, Hotel, Restaurant, etc.), or having specific words in any textual field. It can also be used to find services that have a WKT spatial description that contains a specific GPS position.
-    Service search within a GPS area - It allows to retrieve the set of services that are inside a rectangular area. The services can be filtered as belonging to specific categories (e.g. Accomodation, Hotel, Restaurant, etc.), or having specific words in any textual field.
-    Service search within a WKT described area - It allows to retrieve the set of services that are inside a geographic region described using the Well Known Text (WKT) format. The services can be filtered as belonging to specific categories (e.g. Accomodation, Hotel, Restaurant, etc.), or having specific words in any textual field.
-    Service search within a stored WKT described area - It allows to retrieve the set of services that are inside a geographic region described using the Well Known Text (WKT) format, by referring to the WKT with an identifier provided when the WKT is stored. The services can be filtered as belonging to specific categories (e.g. Accomodation, Hotel, Restaurant, etc.), or having specific words in any textual field. The list of available geometries can be retrived from the Service Map in the Search Area selection box (with Search Range specific area). New geometries can be provided using the http://www.km4city.org/wkt web service which can store a WKT from a shp file or providing directly the WKT string.
-    Service search by municipality - It allows to retrieve the set of services that are in a specific municipality. The services can be filtered as belonging to specific categories (e.g. Accomodation, Hotel, Restaurant, etc.), or having specific words in any textual field.
+    Service search near a service - It allows to retrieve the set of services that are near a given service identified by its serviceUri. The services can be filtered as belonging to specific categories (e.g. Accommodation, Hotel, Restaurant, etc.), or having specific words in any textual field. It can also be used to find services that have a WKT spatial description that contains a specific GPS position.
+    Service search within a GPS area - It allows to retrieve the set of services that are inside a rectangular area. The services can be filtered as belonging to specific categories (e.g. Accommodation, Hotel, Restaurant, etc.), or having specific words in any textual field.
+    Service search within a WKT described area - It allows to retrieve the set of services that are inside a geographic region described using the Well Known Text (WKT) format. The services can be filtered as belonging to specific categories (e.g. Accommodation, Hotel, Restaurant, etc.), or having specific words in any textual field.
+    Service search within a stored WKT described area - It allows to retrieve the set of services that are inside a geographic region described using the Well Known Text (WKT) format, by referring to the WKT with an identifier provided when the WKT is stored. The services can be filtered as belonging to specific categories (e.g. Accommodation, Hotel, Restaurant, etc.), or having specific words in any textual field. The list of available geometries can be retrieved from the Service Map in the Search Area selection box (with Search Range specific area). New geometries can be provided using the http://www.km4city.org/wkt web service which can store a WKT from a shp file or providing directly the WKT string.
+    Service search by municipality - It allows to retrieve the set of services that are in a specific municipality. The services can be filtered as belonging to specific categories (e.g. Accommodation, Hotel, Restaurant, etc.), or having specific words in any textual field.
     Service search by query id - It allows to retrieve the set of services associated with a query stored using the Service Map user interface.
     Full text search - It allows to retrieve the geolocated entities (not only services) that match with a list of keywords. The results can be possibly filtered to be within a specified distance from a GPS position, or within a rectangular area or inside a WKT geolocated area.
-    Service info - It allows to retrieve information about a service using its serviceUri, as an HTML (format query parameter set to html) or a machine readable JSON document (format query parameter set to json).
+    Service info - It allows to retrieve information about a service using its serviceUri, as an HTML (format query parameter set to html) or a machine-readable JSON document (format query parameter set to json).
 
     args:
         - selection: str, Through this parameter, the user indicates where the services have to be searched. It could be a boundary within which to search, or a point around which to search.
                     Usages & Sample values:
                     Service search near GPS position - WGS84 sessadecimal representation of the latitude and longitude of the position of interest, separated by a semicolon. Required. Sample value: 43.7756;11.2490.
                     Service search near a service - Service search near a service. Required. Sample value: http://www.disit.org/km4city/resource/7ad6d2d3be461b1f0514956279c00eab
-                    Service search within a GPS (rectangular) area - Lat#1;Lon#1;Lat#2;Lng#2 where Lat#1;Lng#1 are the WGS84 sessadecimal coordinates of the south west point of the rectangle, and Lat#2;Lng#2 are the coordinates of the north east point. Required. Sample value: 3.7741;11.2453;43.7768;11.2515
+                    Service search within a GPS (rectangular) area - Lat#1;Lon#1;Lat#2;Lng#2 where Lat#1;Lng#1 are the WGS84 sessadecimal coordinates of the south-west point of the rectangle, and Lat#2;Lng#2 are the coordinates of the north-east point. Required. Sample value: 3.7741;11.2453;43.7768;11.2515
                     Service search within a WKT described area - wkt:string describes the geographic region as WKT string. Required. Sample value: wkt:POLYGON((11.25539 43.77339, 11.25608 43.77348, 11.25706 43.77362, 11.25759 43.77328, 11.25755 43.77291, 11.25675 43.77260, 11.25536 43.77270, 11.25539 43.77339))
                     Service search within a stored WKT described area - geo:geo_id where geo_id identifies a WKT string stored on the server. Required. Sample value: geo:ritmi_01
                     Service search by municipality - Name of the municipality like FIRENZE, EMPOLI, PISA possibly with prefix "COMUNE di". Required. Sample value: COMUNE di FIRENZE
@@ -250,23 +250,23 @@ async def get_services(
 
 @mcp.tool()
 async def iot_search(
-    selection: Optional[str],
-    maxDists: Optional[float],
-    categories: Optional[str],
-    model: Optional[str],
-    valueFilters: Optional[str],
-    serviceUri: Optional[str],
-    text: Optional[str],
-    notHealthy: Optional[str],
-    fromResult: Optional[int],
-    maxResults: Optional[int],
-    values: Optional[str],
-    sortOnValue: Optional[str],
+        selection: Optional[str],
+        maxDists: Optional[float],
+        categories: Optional[str],
+        model: Optional[str],
+        valueFilters: Optional[str],
+        serviceUri: Optional[str],
+        text: Optional[str],
+        notHealthy: Optional[str],
+        fromResult: Optional[int],
+        maxResults: Optional[int],
+        values: Optional[str],
+        sortOnValue: Optional[str],
 ):
     """
     This API allows to search over services submitted as IOT devices. The main characteristic is that it can search for devices whose last values satisfy specific conditions, for example it allows to find all Weather_sensor devices in a geographic area whose last value of temperature is over 30 degrees.
     The results can be filtered to be within a specified distance from a GPS position, or within a rectangular area (wkt polygonal area query is not supported).
-    Moreover, results can be filtered by the model used in IoT Directory to create the device, categories (nature or subnature) associated to the device, valueFilters reporting conditions (in AND) on the last value received for dynamic attributes (e.g status:Active;temperature>=23). The results can be paged using fromResult/maxResults.
+    Moreover, results can be filtered by the model used in IoT Directory to create the device, categories (nature or subnature) associated to the device, valueFilters reporting conditions (in AND) on the last value received for dynamic attributes (e.g. status:Active;temperature>=23). The results can be paged using fromResult/maxResults.
     Normally only public iot devices are returned, if you want to include private devices (your own or delegated to you) you have to send an access token in the Authorization header or using the accessToken query parameter.
     Data is indexed on elasticsearch only after any update on the context broker, thus if you change ownership or add a delegation on the device it will be applied only after a data update.
     Consider that the device status is updated on every device change on the context broker, thus if updates are made out of time order it is not guaranteed that the device status provided is the most recent
@@ -332,33 +332,33 @@ async def iot_search(
 
 @mcp.tool()
 async def iot_search_time_range(
-    fromTime: Optional[str],
-    toTime: Optional[str],
-    selection: Optional[str],
-    maxDists: Optional[float],
-    categories: Optional[str],
-    model: Optional[str],
-    valueFilters: Optional[str],
-    serviceUri: Optional[str],
-    text: Optional[str],
-    fromResult: Optional[float],
-    maxResults: Optional[int],
-    aggregate: Optional[str],
-    values: Optional[str],
-    sortOnValue: Optional[str],
+        fromTime: Optional[str],
+        toTime: Optional[str],
+        selection: Optional[str],
+        maxDists: Optional[float],
+        categories: Optional[str],
+        model: Optional[str],
+        valueFilters: Optional[str],
+        serviceUri: Optional[str],
+        text: Optional[str],
+        fromResult: Optional[float],
+        maxResults: Optional[int],
+        aggregate: Optional[str],
+        values: Optional[str],
+        sortOnValue: Optional[str],
 ):
     """
     IoT device/value search over a time range
     This API allows to search over services submitted as IOT devices. The main characteristic is that it can search for devices whose values satisfy specific conditions in a certain time range, for example it allows to find all Weather_sensor devices in a geographic area whose value of temperature is over 30 degrees at least one time over last week. But this api can return all the temporal values matching the request (in this case a service uri is repeated as many times as it matches the query in the time range)
     The results can be filtered to be within a specified distance from a GPS position, or within a rectangular area (wkt polygonal area query is not supported).
-    Moreover, results can be filtered by the model used in IoT Directory to create the device, categories (nature or subnature) associated to the device, valueFilters reporting conditions (in AND) on the last value received for dynamic attributes (e.g status:Active;temperature>=23).
-    The results can be aggregated by service uri with aggregation=true if data is not aggregated can paged using fromResult/maxResults.
+    Moreover, results can be filtered by the model used in IoT Directory to create the device, categories (nature or subnature) associated to the device, valueFilters reporting conditions (in AND) on the last value received for dynamic attributes (e.g. status:Active;temperature>=23).
+    The results can be aggregated by service uri with aggregation=true if data is not aggregated can be paged using fromResult/maxResults.
     Normally only public iot devices are returned, if you want to include private devices (your own or delegated to you) you have to send an access token in the Authorization header or using the accessToken query parameter.
     Data is indexed on elasticsearch, consider that ownership and delegations are not updated for old data, so if ownership or delegations of a device are modified at a certain point in time this api will provide to the new owner or delegated user only data submitted after this change.
     Specify at least 'selection' or 'model' or 'valueFilter' or 'categories' or 'serviceUri' parameter.
     Also specify fromTime
     args:
-    - fromTime: str, expected n-day,n-hour,n-minute or yyyy-mm-ddThh:mm:ss"
+    - fromTime: str, expected n-day,n-hour,n-minute or yyyy-mm-ddThh:mm:ss
     - toTime: str,
     - selection: str,
     - maxDists: float,
@@ -449,15 +449,15 @@ async def get_events(
 
 @mcp.tool()
 async def get_location(
-    position: Optional[str],
-    search: Optional[str],
-    searchMode: Optional[str],
-    maxDists: Optional[float],
-    excludePOI: Optional[bool],
-    maxResults: Optional[int],
-    intersectGeom: Optional[bool],
-    uid: Optional[str],
-    requestFrom: Optional[str]
+        position: Optional[str],
+        search: Optional[str],
+        searchMode: Optional[str],
+        maxDists: Optional[float],
+        excludePOI: Optional[bool],
+        maxResults: Optional[int],
+        intersectGeom: Optional[bool],
+        uid: Optional[str],
+        requestFrom: Optional[str]
 ):
     """
     Address and geometry search by GPS It allows to retrieve the complete address (municipality, street and civic number) given the GPS position. It may also provide a list of services or public transport lines intersecting with the provided GPS position.
@@ -524,6 +524,7 @@ async def get_location(
 # ------------------------ PUBLIC TRANSPORT ------------------------
 
 @mcp.resource("file://snap/agencies")
+# SPERIMENTALE
 async def get_agencies():
     """
     Returns the bus agencies. If the user asks for a specific city or area, look for a correspondence
@@ -547,6 +548,7 @@ async def get_agencies():
             return None
 
 @mcp.tool()
+# SPERIMENTALE
 async def get_bus_lines(area: str, agency_name: str) -> dict:
     """
     This function returns the BUS LINES that one specific agency operates. The arguments can be either an area (city or region) or the agency name.
@@ -585,21 +587,190 @@ async def get_bus_lines(area: str, agency_name: str) -> dict:
         except Exception:
             return None
 
-# @mcp.tool()
-# async def get_bus_routes():
-#     # TODO
-#
-# @mcp.tool()
-# async def get_bus_stops():
-#     # TODO
-#
-# @mcp.tool()
-# async def tpl_geo_search():
-#     # TODO
-#
-# @mcp.tool()
-# async def get_bus_position():
-#     # TODO
+@mcp.tool()
+async def get_bus_routes(
+        agency: Optional[str],
+        line: Optional[str],
+        busStopName: Optional[str],
+        geometry: Optional[bool],
+        uid: Optional[str],
+        requestFrom: Optional[str],
+):
+    """
+    The API provides a list of the public transport routes available for a given agency, line or passing by a specific stop.
+    You need al least 'line' or 'busStopName' or 'agency' parameters.
+    args:
+        - agency: str, URI of the agency whose lines are to be retrieved
+        - line: str, URI or shortName of a line (if URI is provided the agency is not needed).
+        - busStopName: str, URI or name of a stop (if URI is provided the agency is not needed).
+                    Example: Stazione Pensilina
+        - geometry: bool, If true the WKT geometry of the route is returned (false is assumed if not provided).
+        - uid: str, Optional user identifier.
+                    Example: e7c13b5ce309dcddce9f72c810c3f93c61ac1c47d66126127f7a78bd5c2cb8a2
+        - requestFrom: str, The parameter identifies the request's originator for monitoring purposes
+    :return: 
+    """
+    url = f"{TPL_BASE_URL}/tpl/bus-routes/"
+    params = {}
+    for key, value in {
+        "agency": agency,
+        "line": line,
+        "busStopName": busStopName,
+        "geometry": geometry,
+        "uid": uid,
+        "requestFrom": requestFrom
+    }.items():
+        if value is not None:
+            params[key] = value
+
+    async with httpx.AsyncClient() as async_client:
+        try:
+            resp = await async_client.get(url, params=params, timeout=10)
+            resp.raise_for_status()
+            return resp.json()
+        except Exception:
+            return None
+
+
+@mcp.tool()
+async def get_bus_stops(
+        route: Optional[str],
+        geometry: Optional[bool],
+        uid: Optional[str],
+        requestFrom: Optional[str],
+):
+    """
+    The API provides a list of the public transport stops available for a given route. The API can be used on any kind of public transport (Tram, Train, etc.) not only Bus.
+
+    args:
+        - route: str, URI of the route whose bus stops are to be retrieved
+        - geometry: bool, If true, the WKT geometry of the route is returned. It defaults to true.
+                    Default value : true
+        - uid: string, Optional user identifier.
+                    Example: e7c13b5ce309dcddce9f72c810c3f93c61ac1c47d66126127f7a78bd5c2cb8a2
+        - requestFrom: string, The parameter identifies the request's originator for monitoring purposes.
+    :return:
+    """
+    url = f"{TPL_BASE_URL}/tpl/bus-stops/"
+    params = {}
+    for key, value in {
+        "route": route,
+        "geometry": geometry,
+        "uid": uid,
+        "requestFrom": requestFrom
+    }.items():
+        if value is not None:
+            params[key] = value
+
+    async with httpx.AsyncClient() as async_client:
+        try:
+            resp = await async_client.get(url, params=params, timeout=10)
+            resp.raise_for_status()
+            return resp.json()
+        except Exception:
+            return None
+
+@mcp.tool()
+async def tpl_geo_search(
+        selection: str,
+        maxDists: Optional[float],
+        maxResults: Optional[int],
+        agency: Optional[str],
+        geometry: Optional[bool],
+        uid: Optional[str],
+        requestFrom: Optional[str],
+):
+    """
+    The API provides a list of the public transport routes that have a stop in a specified area. The API can be used on any kind of public transport (Tram, Train, etc.) not only Bus.
+
+    args:
+        - selection: str, Valid valorizations:
+                    WGS84 coordinates that identify an exact GPS position: lat;lng
+                    rectangular area: lat1;lng1;lat2;lng2
+                    geographic area described as Well Known Text: wkt:string or geo:geoid
+                    See the selection parameter of Services API for further details.
+        - maxDists: float, Optional maximum distance from the GPS position of the entities to be retrieved, expressed in Km (0.1 is assumed if not present).
+                    Default value : 0.1
+        - maxResults: int, Maximum number of results to be returned (if parameter is missing 100 is assumed), if it is 0 all results are returned.
+                    Default value : 100
+        - agency: str, Optional URI of an agency to restrict the search to a specified agency.
+                    Example: http://www.disit.org/km4city/resource/Bus_ataflinea_Agency_172
+        - geometry: bool, If true, the WKT geometry of each route is returned (considered false if not provided).
+                    Default value : false
+        - uid: str, Optional user identifier.
+                    Example: e7c13b5ce309dcddce9f72c810c3f93c61ac1c47d66126127f7a78bd5c2cb8a2
+        - requestFrom: str, The parameter identifies the request's originator for monitoring purposes.
+    required:
+        - selection
+    :return:
+    """
+    url = f"{TPL_BASE_URL}/tpl"
+    params = {}
+    for key, value in {
+        "selection": selection,
+        "maxDists": maxDists,
+        "maxResults": maxResults,
+        "agency": agency,
+        "geometry": geometry,
+        "uid": uid,
+        "requestFrom": requestFrom
+    }.items():
+        if value is not None:
+            params[key] = value
+
+    async with httpx.AsyncClient() as async_client:
+        try:
+            resp = await async_client.get(url, params=params, timeout=10)
+            resp.raise_for_status()
+            return resp.json()
+        except Exception:
+            return None
+
+@mcp.tool()
+async def get_bus_position(
+        agency: Optional[str],
+        line: Optional[str],
+        uid: Optional[str],
+        format: Optional[str],
+        requestFrom: Optional[str],
+):
+    """
+     The API provides the estimated current position of buses. Currently, it provides the position of ATAF&Linea buses based on the timetable.
+
+     args:
+        - agency: str, The agency of interest (optional). The agency can be identified through its URI, or through its name. If not specified, the default agency is used that is configured for the Knowledge Base (e.g. ATAF for Tuscany).
+                    Example: Ataf&Linea
+        - line: str, The line of interest (optional). The line can be identified through its URI, or through its name. If not specified, positions of all buses are returned.
+                    Example: http://www.disit.org/km4city/resource/48-UrbanoAreaMetropolitanaFiorentina-gtfs_Route_2191078216
+        - uid: str, Optional user identifier.
+                    Example: e7c13b5ce309dcddce9f72c810c3f93c61ac1c47d66126127f7a78bd5c2cb8a2
+        - format: str, HTML, or JSON.
+                    Available values : html, json
+                    Default value : json
+        - requestFrom: str, The parameter identifies the request's originator for monitoring purposes.
+    required:
+        - either 'agency' or 'line'.
+    :return:
+    """
+    url = f"{TPL_BASE_URL}/tpl/bus-position"
+    params = {}
+    for key, value in {
+        "agency": agency,
+        "line": line,
+        "uid": uid,
+        "format": format,
+        "requestFrom": requestFrom
+    }.items():
+        if value is not None:
+            params[key] = value
+
+    async with httpx.AsyncClient() as async_client:
+        try:
+            resp = await async_client.get(url, params=params, timeout=10)
+            resp.raise_for_status()
+            return resp.json()
+        except Exception:
+            return None
 
 @mcp.prompt("explain_bus_lines")
 async def explain_bus_lines_prompt(bus_data: dict, area: str = None):
@@ -629,6 +800,63 @@ async def explain_bus_lines_prompt(bus_data: dict, area: str = None):
 # ------------------------ FEEDBACKS ------------------------
 
 # ------------------------ ROUTING ------------------------
+@mcp.tool()
+async def route_shortest_path(
+        source: str,
+        destination: str,
+        routeType: Optional[str],
+        startDateTime: Optional[str],
+        format: Optional[str],
+        uid: Optional[str],
+        requestFrom: Optional[str],
+):
+    """
+    This API allows to get a path from a source point to a destination point. The points can be specified as latitude;longitude coordinates or using the serviceUri of a service. The path is provided as WKT geometry and as a sequence of arcs between nodes (the service uses the OpenStreetMap road graph). The type of route can be specified as using public transport, feet, or car. The start datetime is used to select the options for public_transport and to evaluate the time needed to make the path
+
+    args:
+        - source: str, lat;long or service URI of the starting point.
+                    Example: 43.7767;11.2477
+        - destination: str, lat;long or service URI of the destination.
+                    Example: 43.7687;11.2620
+        - routeType: str, Can be public_transport, foot_shortest, foot_quiet, or car. It defaults to foot_shortest.
+                    Example: foot_shortest
+                    Available values : public_transport, foot_shortest, foot_quiet, car
+                    Default value : foot_shortest
+        - startDateTime: str, Date and time of start. It defaults to the current date and time.
+                    Example: 2017-01-13T12:34:00
+        - format: str, The output format. It can be json, or html. It defaults to json.
+                    Example: html
+                    Available values : json, html
+                    Default value : json
+        - uid: str, A user identifier.
+                    Example: e7c13b5ce309dcddce9f72c810c3f93c61ac1c47d66126127f7a78bd5c2cb8a2
+        - requestFrom: str, The parameter identifies the request's originator for monitoring purposes
+    required:
+        - source: str
+        - destination: str
+    :return:
+    """
+    url = f"{TPL_BASE_URL}/shortestpath"
+    params = {}
+    for key, value in {
+        "source": source,
+        "destination": destination,
+        "routeType": routeType,
+        "startDateTime": startDateTime,
+        "format": format,
+        "uid": uid,
+        "requestFrom": requestFrom
+    }.items():
+        if value is not None:
+            params[key] = value
+
+    async with httpx.AsyncClient() as async_client:
+        try:
+            resp = await async_client.get(url, params=params, timeout=10)
+            resp.raise_for_status()
+            return resp.json()
+        except Exception:
+            return None
 
 
 if __name__ == "__main__":
