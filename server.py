@@ -25,32 +25,32 @@ model = "meta-llama/llama-4-scout-17b-16e-instruct"
 
 @mcp.tool()
 async def get_services(
-        selection: Optional[str],
-        queryId: Optional[str],
-        search: Optional[str],
-        categories: Optional[str],
-        text: Optional[str],
-        maxDists: Optional[float],
-        maxResults: Optional[int],
-        lang: Optional[str],
-        geometry: Optional[bool],
-        uid: Optional[str],
-        format: Optional[str],
-        map: Optional[str],
-        controls: Optional[str],
-        info: Optional[str],
-        serviceUri: Optional[str],
-        realtime: Optional[bool],
-        requestFrom: Optional[str],
-        valueName: Optional[str],
-        fromTime: Optional[str],
-        toTime: Optional[str],
-        value_type: Optional[str],
-        healthiness: Optional[bool],
-        graphUri: Optional[str],
-        fullCount: Optional[bool],
-        accessToken: Optional[str],
-        apikey: Optional[str],
+        selection: Optional[str] = None,
+        queryId: Optional[str] = None,
+        search: Optional[str] = None,
+        categories: Optional[str] = None,
+        text: Optional[str] = None,
+        maxDists: Optional[str] = None,
+        maxResults: Optional[str] = None,
+        lang: Optional[str] = None,
+        geometry: Optional[str] = None,
+        uid: Optional[str] = None,
+        format: Optional[str] = None,
+        map: Optional[str] = None,
+        controls: Optional[str] = None,
+        info: Optional[str] = None,
+        serviceUri: Optional[str] = None,
+        realtime: Optional[str] = None,
+        requestFrom: Optional[str] = None,
+        valueName: Optional[str] = None,
+        fromTime: Optional[str] = None,
+        toTime: Optional[str] = None,
+        value_type: Optional[str] = None,
+        healthiness: Optional[str] = None,
+        graphUri: Optional[str] = None,
+        fullCount: Optional[str] = None,
+        accessToken: Optional[str] = None,
+        apikey: Optional[str] = None
 ):
     """
     Service search near GPS position - It allows to retrieve the set of services that are near a given GPS position. The services can be filtered as belonging to specific categories (e.g. Accommodation, Hotel, Restaurant, etc.), or having specific words in any textual field. It can also be used to find services that have a WKT spatial description that contains a specific GPS position.
@@ -236,7 +236,7 @@ async def get_services(
             "accessToken": accessToken,
             "apikey": apikey
     }.items():
-        if value is not None:
+        if value:
             params[key] = value
 
     async with httpx.AsyncClient() as async_client:
@@ -250,18 +250,18 @@ async def get_services(
 
 @mcp.tool()
 async def iot_search(
-        selection: Optional[str],
-        maxDists: Optional[float],
-        categories: Optional[str],
-        model: Optional[str],
-        valueFilters: Optional[str],
-        serviceUri: Optional[str],
-        text: Optional[str],
-        notHealthy: Optional[str],
-        fromResult: Optional[int],
-        maxResults: Optional[int],
-        values: Optional[str],
-        sortOnValue: Optional[str],
+        selection: Optional[str] = None,
+        maxDists: Optional[str] = None,
+        categories: Optional[str] = None,
+        model: Optional[str] = None,
+        valueFilters: Optional[str] = None,
+        serviceUri: Optional[str] = None,
+        text: Optional[str] = None,
+        notHealthy: Optional[str] = None,
+        fromResult: Optional[str] = None,
+        maxResults: Optional[str] = None,
+        values: Optional[str] = None,
+        sortOnValue: Optional[str] = None,
 ):
     """
     This API allows to search over services submitted as IOT devices. The main characteristic is that it can search for devices whose last values satisfy specific conditions, for example it allows to find all Weather_sensor devices in a geographic area whose last value of temperature is over 30 degrees.
@@ -271,6 +271,8 @@ async def iot_search(
     Data is indexed on elasticsearch only after any update on the context broker, thus if you change ownership or add a delegation on the device it will be applied only after a data update.
     Consider that the device status is updated on every device change on the context broker, thus if updates are made out of time order it is not guaranteed that the device status provided is the most recent
     Always specify 'selection' or 'model' or 'valueFilters' or 'categories' or 'serviceUri' parameter.
+    When you need to pass a number to the function, pass it as an int or float, do not use semi colons.
+    Also when you don't use a parameter, call the function without that parameter. Do not pass an empty string.
     args:
         - selection: str, Through this parameter, the user indicates where the services have to be searched. It could be a rectangular boundary within which to search, or a point around which to search.
                         Usages & Sample values:
@@ -307,19 +309,19 @@ async def iot_search(
     params = {}
     for key, value in {
         "selection": selection,
-          "maxDists": maxDists,
-          "categories": categories,
-          "model": model,
-          "valueFilters": valueFilters,
-          "serviceUri": serviceUri,
-          "text": text,
-          "notHealthy": notHealthy,
-          "fromResult": fromResult,
-          "maxResults": maxResults,
-          "values": values,
-          "sortOnValue": sortOnValue
+        "maxDists": maxDists, # float
+        "categories": categories,
+        "model": model,
+        "valueFilters": valueFilters,
+        "serviceUri": serviceUri,
+        "text": text,
+        "notHealthy": notHealthy,
+        "fromResult": fromResult, # int con quello sotto.
+        "maxResults": maxResults,
+        "values": values,
+        "sortOnValue": sortOnValue
     }.items():
-        if value is not None:
+        if value:
             params[key] = value
 
     async with httpx.AsyncClient() as async_client:
@@ -332,20 +334,20 @@ async def iot_search(
 
 @mcp.tool()
 async def iot_search_time_range(
-        fromTime: Optional[str],
-        toTime: Optional[str],
-        selection: Optional[str],
-        maxDists: Optional[float],
-        categories: Optional[str],
-        model: Optional[str],
-        valueFilters: Optional[str],
-        serviceUri: Optional[str],
-        text: Optional[str],
-        fromResult: Optional[float],
-        maxResults: Optional[int],
-        aggregate: Optional[str],
-        values: Optional[str],
-        sortOnValue: Optional[str],
+        fromTime: Optional[str] = None,
+        toTime: Optional[str] = None,
+        selection: Optional[str] = None,
+        maxDists: Optional[str] = None,
+        categories: Optional[str] = None,
+        model: Optional[str] = None,
+        valueFilters: Optional[str] = None,
+        serviceUri: Optional[str] = None,
+        text: Optional[str] = None,
+        fromResult: Optional[str] = None,
+        maxResults: Optional[str] = None,
+        aggregate: Optional[str] = None,
+        values: Optional[str] = None,
+        sortOnValue: Optional[str] = None,
 ):
     """
     IoT device/value search over a time range
@@ -393,7 +395,7 @@ async def iot_search_time_range(
         "values": values,
         "sortOnValue": sortOnValue
     }.items():
-        if value is not None:
+        if value:
             params[key] = value
 
     async with httpx.AsyncClient() as async_client:
@@ -406,12 +408,14 @@ async def iot_search_time_range(
 
 # ------------------------ EVENTS ------------------------
 
+# Does it work in snap? Is it used?
 @mcp.tool()
 async def get_events(
-        range: Optional[str],
-        selection: Optional[str],
-        maxDists: Optional[float],
-        maxResults: Optional[int]):
+        range: Optional[str] = None,
+        selection: Optional[str] = None,
+        maxDists: Optional[str] = None,
+        maxResults: Optional[str] = None
+):
     """
     It allows to retrieve the geolocated events in a given temporal range (day, week or month).
     The results can be possibly filtered to be within a specified distance from a GPS position, or within a rectangular area or inside a WKT described geographic area.
@@ -433,7 +437,7 @@ async def get_events(
         "maxDists": maxDists,
         "maxResults": maxResults,
     }.items():
-        if value is not None:
+        if value:
             params[key] = value
 
     async with httpx.AsyncClient() as async_client:
@@ -449,15 +453,15 @@ async def get_events(
 
 @mcp.tool()
 async def get_location(
-        position: Optional[str],
-        search: Optional[str],
-        searchMode: Optional[str],
-        maxDists: Optional[float],
-        excludePOI: Optional[bool],
-        maxResults: Optional[int],
-        intersectGeom: Optional[bool],
-        uid: Optional[str],
-        requestFrom: Optional[str]
+        position: str,
+        search: Optional[str] = None,
+        searchMode: Optional[str] = None,
+        maxDists: Optional[str] = None,
+        excludePOI: Optional[str] = None,
+        maxResults: Optional[str] = None,
+        intersectGeom: Optional[str] = None,
+        uid: Optional[str] = None,
+        requestFrom: Optional[str] = None
 ):
     """
     Address and geometry search by GPS It allows to retrieve the complete address (municipality, street and civic number) given the GPS position. It may also provide a list of services or public transport lines intersecting with the provided GPS position.
@@ -494,6 +498,8 @@ async def get_location(
                     Usages: Address and geometry search by GPS, Address/POI search by text.
                     Example: e7c13b5ce309dcddce9f72c810c3f93c61ac1c47d66126127f7a78bd5c2cb8a2
         - requestFrom: str, The parameter identifies the request's originator for monitoring purposes.
+    required:
+        - position
     :return:
     """
     url = f"{TPL_BASE_URL}/location"
@@ -509,7 +515,7 @@ async def get_location(
         "uid": uid,
         "requestFrom": requestFrom,
     }.items():
-        if value is not None:
+        if value:
             params[key] = value
 
     async with httpx.AsyncClient() as async_client:
@@ -589,12 +595,12 @@ async def get_bus_lines(area: str, agency_name: str) -> dict:
 
 @mcp.tool()
 async def get_bus_routes(
-        agency: Optional[str],
-        line: Optional[str],
-        busStopName: Optional[str],
-        geometry: Optional[bool],
-        uid: Optional[str],
-        requestFrom: Optional[str],
+        agency: Optional[str] = None,
+        line: Optional[str] = None,
+        busStopName: Optional[str] = None,
+        geometry: Optional[str] = None,
+        uid: Optional[str] = None,
+        requestFrom: Optional[str] = None,
 ):
     """
     The API provides a list of the public transport routes available for a given agency, line or passing by a specific stop.
@@ -620,7 +626,7 @@ async def get_bus_routes(
         "uid": uid,
         "requestFrom": requestFrom
     }.items():
-        if value is not None:
+        if value:
             params[key] = value
 
     async with httpx.AsyncClient() as async_client:
@@ -634,10 +640,10 @@ async def get_bus_routes(
 
 @mcp.tool()
 async def get_bus_stops(
-        route: Optional[str],
-        geometry: Optional[bool],
-        uid: Optional[str],
-        requestFrom: Optional[str],
+        route: Optional[str] = None,
+        geometry: Optional[str] = None,
+        uid: Optional[str] = None,
+        requestFrom: Optional[str] = None,
 ):
     """
     The API provides a list of the public transport stops available for a given route. The API can be used on any kind of public transport (Tram, Train, etc.) not only Bus.
@@ -659,7 +665,7 @@ async def get_bus_stops(
         "uid": uid,
         "requestFrom": requestFrom
     }.items():
-        if value is not None:
+        if value:
             params[key] = value
 
     async with httpx.AsyncClient() as async_client:
@@ -673,12 +679,12 @@ async def get_bus_stops(
 @mcp.tool()
 async def tpl_geo_search(
         selection: str,
-        maxDists: Optional[float],
-        maxResults: Optional[int],
-        agency: Optional[str],
-        geometry: Optional[bool],
-        uid: Optional[str],
-        requestFrom: Optional[str],
+        maxDists: Optional[str] = None,
+        maxResults: Optional[str] = None,
+        agency: Optional[str] = None,
+        geometry: Optional[str] = None,
+        uid: Optional[str] = None,
+        requestFrom: Optional[str] = None,
 ):
     """
     The API provides a list of the public transport routes that have a stop in a specified area. The API can be used on any kind of public transport (Tram, Train, etc.) not only Bus.
@@ -715,7 +721,7 @@ async def tpl_geo_search(
         "uid": uid,
         "requestFrom": requestFrom
     }.items():
-        if value is not None:
+        if value:
             params[key] = value
 
     async with httpx.AsyncClient() as async_client:
@@ -728,11 +734,11 @@ async def tpl_geo_search(
 
 @mcp.tool()
 async def get_bus_position(
-        agency: Optional[str],
-        line: Optional[str],
-        uid: Optional[str],
-        format: Optional[str],
-        requestFrom: Optional[str],
+        agency: Optional[str] = None,
+        line: Optional[str] = None,
+        uid: Optional[str] = None,
+        format: Optional[str] = None,
+        requestFrom: Optional[str] = None,
 ):
     """
      The API provides the estimated current position of buses. Currently, it provides the position of ATAF&Linea buses based on the timetable.
@@ -761,7 +767,7 @@ async def get_bus_position(
         "format": format,
         "requestFrom": requestFrom
     }.items():
-        if value is not None:
+        if value:
             params[key] = value
 
     async with httpx.AsyncClient() as async_client:
@@ -804,11 +810,11 @@ async def explain_bus_lines_prompt(bus_data: dict, area: str = None):
 async def route_shortest_path(
         source: str,
         destination: str,
-        routeType: Optional[str],
-        startDateTime: Optional[str],
-        format: Optional[str],
-        uid: Optional[str],
-        requestFrom: Optional[str],
+        routeType: Optional[str] = None,
+        startDateTime: Optional[str] = None,
+        format: Optional[str] = None,
+        uid: Optional[str] = None,
+        requestFrom: Optional[str] = None,
 ):
     """
     This API allows to get a path from a source point to a destination point. The points can be specified as latitude;longitude coordinates or using the serviceUri of a service. The path is provided as WKT geometry and as a sequence of arcs between nodes (the service uses the OpenStreetMap road graph). The type of route can be specified as using public transport, feet, or car. The start datetime is used to select the options for public_transport and to evaluate the time needed to make the path
@@ -847,7 +853,7 @@ async def route_shortest_path(
         "uid": uid,
         "requestFrom": requestFrom
     }.items():
-        if value is not None:
+        if value:
             params[key] = value
 
     async with httpx.AsyncClient() as async_client:
