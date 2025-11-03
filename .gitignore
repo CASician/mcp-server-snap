@@ -1,4 +1,6 @@
 .env
-venv-server
+venv
 .idea
 domande.md
+user_credentials.json
+__pycache__

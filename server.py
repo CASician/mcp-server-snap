@@ -563,6 +563,8 @@ async def get_bus_lines(area: str, agency_name: str) -> dict:
         - area: str, name of a specific zone. It may be a city, it may be a region. In case it is not clear, try to look for clues in the previous conversation.
         - agency_name: str, the name of the agency whose url needs to be retrieved.
     required:
+        - area, default "Firenze"
+        - agency_name, default "AT Autolinee Toscane"
     """
     async def get_agency_url(area: str, agency_name: str, temperature: int = 0, max_tokens=512):
         agencies = await get_agencies()
