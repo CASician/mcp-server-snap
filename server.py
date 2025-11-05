@@ -1,14 +1,16 @@
 import asyncio
-
-import os
-
 import httpx
-from groq import AsyncGroq
 from mcp.server.fastmcp import FastMCP
-from dotenv import load_dotenv
 from typing import Optional
-
-load_dotenv()
+import sys
+import os
+from pathlib import Path
+# Path for llama4. TBR
+current_dir = Path(__file__).parent.absolute()
+home_dir = current_dir.parent
+mcp_snap_dir = home_dir / "mcp-client-snap"
+sys.path.insert(0, str(mcp_snap_dir))
+from llama4.lab_llm import LabLLM
 
 # Initialize FAstMCP server
 mcp = FastMCP("snap4")
@@ -16,10 +18,8 @@ mcp = FastMCP("snap4")
 # Constants
 TPL_BASE_URL = "https://www.snap4city.org/superservicemap/api/v1"
 USER_AGENT = "snap/1.0"
-api_key = os.getenv("GROQ_API_KEY")
 
-client = AsyncGroq(api_key=api_key, base_url="https://api.groq.com/")
-model = "meta-llama/llama-4-scout-17b-16e-instruct"
+client = LabLLM()
 
 # ------------------------ SERVICES ------------------------
 
@@ -574,14 +574,12 @@ async def get_bus_lines(area: str, agency_name: str) -> dict:
                                         },
                                        {"role": "user", "content": f"Find the link of the agency of tpl that better serves this area: {area}, or look for this specific agency: {agency_name} Use this list: {agencies}"}]
 
-        response = await client.chat.completions.create(
-            model=model,  # Adjust the model as necessary
+        response = client.chat_completion(
             messages=get_agency_url_chat_history,
-            max_tokens=max_tokens,
-            temperature=temperature
+            function_call="none"
         )
 
-        return response.choices[0].message.content
+        return response["choices"][0]["message"].get("content")
 
     agency =  await get_agency_url(area=area, agency_name=agency_name)
     print(agency)
