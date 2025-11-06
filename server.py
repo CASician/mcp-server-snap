@@ -778,32 +778,46 @@ async def get_bus_position(
         except Exception:
             return None
 
-@mcp.prompt("explain_bus_lines")
-async def explain_bus_lines_prompt(bus_data: dict, area: str = None):
+@mcp.prompt("plan_route")
+async def plan_route(start: str, end: str, route_type: str = None, date: str = None):
     """
-    Generate a natural-language explanation for the bus lines available in a given area.
+    This is a detailed plan that LLM should follow to correctly retrieve the requested route. 
 
     Args:
-        bus_data (dict): The JSON returned by get_bus_lines().
-        area (str, optional): The name of the area to contextualize the answer.
+        start: (str, required) the starting point, natural language
+        end: (str, required) the destination, natural language
+        route_type: (str, optional) by foot, by public transport, by car
+        date: (str, optional) 'now'=default, 'tomorrow', 'in a week', 'next month', can also be very precise. 
     """
-    intro = f"The following is the list of bus lines operating in {area}:" if area else "Here are some bus lines:"
+    intro = "I want to find the shortest and fastest route possible, using the tool 'route_shortest_path', but before I tell you that, there are some steps you need to take!"
 
-    # This prompt simply structures what the model should do with the JSON data
-    return {
-        "role": "system",
-        "content": (
-            f"{intro}\n\n"
-            f"{bus_data}\n\n"
-            "Please explain to the user in a clear and friendly way:\n"
-            "- How many lines there are,\n"
-            "- Which ones seem to be the main routes (based on names or codes),\n"
-            "- And any pattern you can infer (e.g. which cover the city center or suburbs).\n"
-            "Avoid restating the raw JSON; focus on clarity and usefulness."
-        )
-    }
+    gps_position = f"The starting point is {start}. But the first thing you need to do is to look this up on internet and try to find the exact gps position. If it seems you can't find it, you can use the tool 'get_location' from this server. Use the default GPS points, but search in a 10 km radius. Then proceed with the exact same thing for the destination, which is {end}."
+
+    route_type_msg = f"I prefer to travel (by/with/on) {route_type}, so make sure that in the final call is correctly selected."
+
+    date_msg = f"The starting time will be {date}. Today is 06 Novembre 2025." 
+
+    final = f"Only after you obtain all this information, you can finally make the function_call to route_shortest_path. Use the gps positions you found for {start} and {end}, the mean of travel and the correct day, in the correct format. When you obtain the result, tell me all the details you know!"
+
+    execution = "Do not explain me again what steps to take. Just take the first step. "
+    return intro + gps_position + route_type_msg + date_msg + final
 
 # ------------------------ FEEDBACKS ------------------------
+
+@mcp.prompt("greetings")
+async def greetings(name: str = None, surname: str = None, nickname: str = None):
+    """
+    Greet the user, given their name. It would be great to have the actual prompt in this description.
+
+    Args:
+        name (str, optional): The name of the user.
+        surname (str, optional): The surname of the user 
+        nickname (str, optional): The nickname of the user.
+    """
+    hello_line = f"Hello, {name}!" if name else "Hello, sir"
+    hello_line1 = f" I heard your surname is {surname}" if surname else ""
+    hello_line2 = f" but people call you {nickname}" if nickname else ""
+    return hello_line + hello_line1 + hello_line2
 
 # ------------------------ ROUTING ------------------------
 @mcp.tool()
